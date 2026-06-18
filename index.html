@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethiopia Trade Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; max-width: 960px; margin: 48px auto; padding: 0 28px; background: #fff; color: #222; }
+  header { border-bottom: 2px solid #222; padding-bottom: 16px; margin-bottom: 36px; }
+  header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  header p { font-size: 13px; color: #666; }
+  section { margin-bottom: 56px; }
+  section h2 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  section p.sub { font-size: 13px; color: #666; margin-bottom: 14px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 14px; font-size: 12px; color: #555; }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .swatch { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
+  .chart-wrap { position: relative; width: 100%; }
+  p.source { font-size: 11px; color: #aaa; margin-top: 8px; }
+  .divider { border: none; border-top: 1px solid #e5e5e5; margin: 0 0 48px; }
+  .note { background: #f7f7f5; border-left: 3px solid #1D9E75; padding: 12px 16px; font-size: 13px; color: #444; margin-bottom: 32px; line-height: 1.6; }
+  nav { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 40px; }
+  nav a { font-size: 12px; color: #185FA5; text-decoration: none; border: 1px solid #B5D4F4; padding: 5px 12px; border-radius: 4px; }
+  nav a:hover { background: #E6F1FB; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px; }
+  .card { border: 1px solid #e5e5e5; padding: 14px; background: #fff; }
+  .card .label { font-size: 11px; color: #777; margin-bottom: 6px; }
+  .card .value { font-size: 20px; font-weight: 700; }
+  .card .neg { color: #993556; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 14px; }
+  th { text-align: left; border-bottom: 2px solid #222; padding: 8px 6px; font-weight: 600; }
+  td { border-bottom: 1px solid #e5e5e5; padding: 7px 6px; vertical-align: top; }
+  td:nth-child(4), td:nth-child(5), td:nth-child(6) { text-align: right; white-space: nowrap; }
+  @media (max-width: 720px) { .cards { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Ethiopia trade with the world</h1>
+  <p>Top export and import products at HS4 and HS6 level &nbsp;|&nbsp; 2023–2025 &nbsp;|&nbsp; Values in USD million &nbsp;|&nbsp; Source: ITC Trade Map</p>
+</header>
+
+<nav>
+  <a href="#hs4-exports">HS4 exports</a>
+  <a href="#hs4-imports">HS4 imports</a>
+  <a href="#hs6-exports">HS6 exports</a>
+  <a href="#hs6-imports">HS6 imports</a>
+  <a href="#data">Data tables</a>
+</nav>
+
+<div class="cards">
+  <div class="card"><div class="label">Total exports, 2025</div><div class="value">USD 5,239.6m</div></div>
+  <div class="card"><div class="label">Total imports, 2025</div><div class="value">USD 9,117.5m</div></div>
+  <div class="card"><div class="label">Trade balance, 2025</div><div class="value neg">USD -3,877.9m</div></div>
+</div>
+
+<div class="note">
+  Non-informative “commodities not elsewhere specified” categories are excluded from the plotted top-20 rankings. The photovoltaic entries are labelled explicitly: HS 854143 covers photovoltaic cells assembled in modules or panels, while HS 854142 covers photovoltaic cells not assembled in modules.
+</div>
+
+<section id="hs4-exports">
+  <h2>Ethiopia exports to the world — top 20 sectors (HS4)</h2>
+  <p class="sub">Ranked by 2025 export value &nbsp;|&nbsp; 2023–2025</p>
+  <div class="legend"><span><span class="swatch" style="background:#B5D4F4"></span>2023</span><span><span class="swatch" style="background:#378ADD"></span>2024</span><span><span class="swatch" style="background:#0C447C"></span>2025</span></div>
+  <div class="chart-wrap" style="height:820px;"><canvas id="hs4ExportChart"></canvas></div>
+  <p class="source">Source: ITC Trade Map. Values converted from USD thousands to USD million.</p>
+</section>
+
+<hr class="divider">
+
+<section id="hs4-imports">
+  <h2>Ethiopia imports from the world — top 20 sectors (HS4)</h2>
+  <p class="sub">Ranked by 2025 import value &nbsp;|&nbsp; 2023–2025</p>
+  <div class="legend"><span><span class="swatch" style="background:#9FE1CB"></span>2023</span><span><span class="swatch" style="background:#1D9E75"></span>2024</span><span><span class="swatch" style="background:#085041"></span>2025</span></div>
+  <div class="chart-wrap" style="height:820px;"><canvas id="hs4ImportChart"></canvas></div>
+  <p class="source">Source: ITC Trade Map. HS6 import lines aggregated to HS4. Values converted from USD thousands to USD million.</p>
+</section>
+
+<hr class="divider">
+
+<section id="hs6-exports">
+  <h2>Ethiopia exports to the world — top 20 products (HS6)</h2>
+  <p class="sub">Ranked by 2025 export value &nbsp;|&nbsp; 2023–2025</p>
+  <div class="legend"><span><span class="swatch" style="background:#B5D4F4"></span>2023</span><span><span class="swatch" style="background:#378ADD"></span>2024</span><span><span class="swatch" style="background:#0C447C"></span>2025</span></div>
+  <div class="chart-wrap" style="height:820px;"><canvas id="hs6ExportChart"></canvas></div>
+  <p class="source">Source: ITC Trade Map. Values converted from USD thousands to USD million.</p>
+</section>
+
+<hr class="divider">
+
+<section id="hs6-imports">
+  <h2>Ethiopia imports from the world — top 20 products (HS6)</h2>
+  <p class="sub">Ranked by 2025 import value &nbsp;|&nbsp; 2023–2025</p>
+  <div class="legend"><span><span class="swatch" style="background:#9FE1CB"></span>2023</span><span><span class="swatch" style="background:#1D9E75"></span>2024</span><span><span class="swatch" style="background:#085041"></span>2025</span></div>
+  <div class="chart-wrap" style="height:820px;"><canvas id="hs6ImportChart"></canvas></div>
+  <p class="source">Source: ITC Trade Map. Values converted from USD thousands to USD million.</p>
+</section>
+
+<hr class="divider">
+
+<section id="data">
+  <h2>Underlying data tables</h2>
+  <p class="sub">Exact Trade Map labels for plotted products &nbsp;|&nbsp; USD million</p>
+
+  <h2>HS4 exports</h2>
+  <table><thead><tr><th>Rank</th><th>HS</th><th>Product label</th><th>2023</th><th>2024</th><th>2025</th></tr></thead><tbody><tr><td>1</td><td>HS 0901</td><td>Coffee, whether or not roasted or decaffeinated; coffee husks and skins; coffee substitutes ...</td><td>1,225.0</td><td>1,583.3</td><td>2,853.4</td></tr>
+<tr><td>2</td><td>HS 8541</td><td>Semiconductor devices &quot;e.g. diodes, transistors, semiconductor-based transducers&quot;; photosensitive ...</td><td>0.1</td><td>0.0</td><td>451.1</td></tr>
+<tr><td>3</td><td>HS 0603</td><td>Cut flowers and flower buds of a kind suitable for bouquets or for ornamental purposes, fresh, ...</td><td>231.1</td><td>287.5</td><td>303.1</td></tr>
+<tr><td>4</td><td>HS 1207</td><td>Other oil seeds and oleaginous fruits, whether or not broken (excl. edible nuts, olives, soya ...</td><td>258.5</td><td>298.0</td><td>285.6</td></tr>
+<tr><td>5</td><td>HS 8411</td><td>Turbojets, turbopropellers and other gas turbines</td><td>5.2</td><td>52.5</td><td>141.7</td></tr>
+<tr><td>6</td><td>HS 0713</td><td>Dried leguminous vegetables, shelled, whether or not skinned or split</td><td>257.4</td><td>179.5</td><td>135.3</td></tr>
+<tr><td>7</td><td>HS 2304</td><td>Oilcake and other solid residues, whether or not ground or in the form of pellets, resulting ...</td><td>5.1</td><td>34.5</td><td>60.9</td></tr>
+<tr><td>8</td><td>HS 6111</td><td>Babies&#x27; garments and clothing accessories, knitted or crocheted (excl. hats)</td><td>15.6</td><td>39.5</td><td>52.6</td></tr>
+<tr><td>9</td><td>HS 6203</td><td>Men&#x27;s or boys&#x27; suits, ensembles, jackets, blazers, trousers, bib and brace overalls, breeches ...</td><td>18.3</td><td>48.0</td><td>49.4</td></tr>
+<tr><td>10</td><td>HS 5306</td><td>Flax yarn</td><td>9.1</td><td>35.3</td><td>42.5</td></tr>
+<tr><td>11</td><td>HS 0602</td><td>Live plants incl. their roots, cuttings and slips; mushroom spawn (excl. bulbs, tubers, tuberous ...</td><td>30.8</td><td>36.5</td><td>31.4</td></tr>
+<tr><td>12</td><td>HS 6109</td><td>T-shirts, singlets and other vests, knitted or crocheted</td><td>7.9</td><td>27.9</td><td>31.3</td></tr>
+<tr><td>13</td><td>HS 0204</td><td>Meat of sheep or goats, fresh, chilled or frozen</td><td>61.3</td><td>55.1</td><td>28.8</td></tr>
+<tr><td>14</td><td>HS 0201</td><td>Meat of bovine animals, fresh or chilled</td><td>0.0</td><td>29.2</td><td>27.6</td></tr>
+<tr><td>15</td><td>HS 6204</td><td>Women&#x27;s or girls&#x27; suits, ensembles, jackets, blazers, dresses, skirts, divided skirts, trousers, ...</td><td>3.8</td><td>25.5</td><td>27.4</td></tr>
+<tr><td>16</td><td>HS 6110</td><td>Jerseys, pullovers, cardigans, waistcoats and similar articles, knitted or crocheted (excl. ...</td><td>6.8</td><td>24.0</td><td>24.7</td></tr>
+<tr><td>17</td><td>HS 6104</td><td>Women&#x27;s or girls&#x27; suits, ensembles, jackets, blazers, dresses, skirts, divided skirts, trousers, ...</td><td>6.1</td><td>26.6</td><td>24.1</td></tr>
+<tr><td>18</td><td>HS 8807</td><td>Parts of aircraft and spacecraft of heading 8801, 8802 or 8806, n.e.s.</td><td>5.1</td><td>62.4</td><td>23.5</td></tr>
+<tr><td>19</td><td>HS 5205</td><td>Cotton yarn other than sewing thread, containing &gt;= 85% cotton by weight (excl. that put up ...</td><td>4.4</td><td>16.0</td><td>19.6</td></tr>
+<tr><td>20</td><td>HS 2615</td><td>Niobium, tantalum, vanadium or zirconium ores and concentrates</td><td>10.9</td><td>13.2</td><td>17.5</td></tr></tbody></table>
+
+  <h2 style="margin-top:28px;">HS4 imports</h2>
+  <table><thead><tr><th>Rank</th><th>HS</th><th>Product label</th><th>2023</th><th>2024</th><th>2025</th></tr></thead><tbody><tr><td>1</td><td>HS 8802</td><td>Aeroplanes and other powered aircraft of an of an unladen weight &gt; 15.000 kg (excl. helicopters, ...</td><td>12.4</td><td>585.4</td><td>526.8</td></tr>
+<tr><td>2</td><td>HS 8411</td><td>Turbojets of a thrust &gt; 25 kN</td><td>405.8</td><td>653.2</td><td>514.6</td></tr>
+<tr><td>3</td><td>HS 3105</td><td>Diammonium hydrogenorthophosphate &quot;diammonium phosphate&quot; (excl. that in tablets or similar ...</td><td>697.2</td><td>45.3</td><td>399.7</td></tr>
+<tr><td>4</td><td>HS 8471</td><td>Processing units for automatic data-processing machines, whether or not containing in the same ...</td><td>196.1</td><td>455.1</td><td>312.4</td></tr>
+<tr><td>5</td><td>HS 2710</td><td>Medium oils and preparations, of petroleum or bituminous minerals, not containing biodiesel, ...</td><td>2,421.6</td><td>321.1</td><td>282.6</td></tr>
+<tr><td>6</td><td>HS 8429</td><td>Self-propelled mechanical shovels, excavators and shovel loaders, with a 360° revolving su ...</td><td>98.1</td><td>71.5</td><td>264.1</td></tr>
+<tr><td>7</td><td>HS 3004</td><td>Medicaments consisting of mixed or unmixed products for therapeutic or prophylactic purposes, ...</td><td>459.6</td><td>250.0</td><td>258.8</td></tr>
+<tr><td>8</td><td>HS 8544</td><td>Electric conductors, for a voltage &lt;= 1.000 V, insulated, not fitted with connectors, n.e.s.</td><td>133.3</td><td>184.4</td><td>192.8</td></tr>
+<tr><td>9</td><td>HS 8807</td><td>Parts of aeroplanes, helicopters or unmanned aircraft, n.e.s. (excl. those for gliders)</td><td>355.4</td><td>101.7</td><td>177.4</td></tr>
+<tr><td>10</td><td>HS 8517</td><td>Machines for the reception, conversion and transmission or regeneration of voice, images or ...</td><td>348.2</td><td>226.2</td><td>161.8</td></tr>
+<tr><td>11</td><td>HS 3102</td><td>Urea, whether or not in aqueous solution (excl. that in tablets or similar forms, or in packages ...</td><td>495.4</td><td>38.1</td><td>155.7</td></tr>
+<tr><td>12</td><td>HS 8543</td><td>Electrical machines and apparatus, having individual functions, n.e.s. in chapter 85</td><td>4.9</td><td>104.2</td><td>102.3</td></tr>
+<tr><td>13</td><td>HS 7308</td><td>Structures and parts of structures, of iron or steel, n.e.s. (excl. bridges and bridge-sections, ...</td><td>123.3</td><td>73.6</td><td>101.8</td></tr>
+<tr><td>14</td><td>HS 8541</td><td>Photovoltaic cells not assembled in modules or made up into panels</td><td>13.3</td><td>10.5</td><td>101.1</td></tr>
+<tr><td>15</td><td>HS 3002</td><td>Vaccines for human medicine</td><td>170.3</td><td>146.7</td><td>98.0</td></tr>
+<tr><td>16</td><td>HS 8504</td><td>Static converters</td><td>135.7</td><td>140.6</td><td>95.4</td></tr>
+<tr><td>17</td><td>HS 3808</td><td>Herbicides, anti-sprouting products and plant-growth regulators, put up in forms or packings ...</td><td>163.7</td><td>123.1</td><td>86.0</td></tr>
+<tr><td>18</td><td>HS 8703</td><td>Motor cars and other motor vehicles principally designed for the transport of &lt;10 persons, ...</td><td>575.3</td><td>138.1</td><td>84.5</td></tr>
+<tr><td>19</td><td>HS 4011</td><td>New pneumatic tyres, of rubber, of a kind used for buses and lorries (excl. tyres with lug, ...</td><td>135.2</td><td>77.0</td><td>83.5</td></tr>
+<tr><td>20</td><td>HS 8486</td><td>Machines and apparatus for the manufacture of semiconductor devices or of electronic integrated ...</td><td>0.1</td><td>0.1</td><td>82.6</td></tr></tbody></table>
+
+  <h2 style="margin-top:28px;">HS6 exports</h2>
+  <table><thead><tr><th>Rank</th><th>HS</th><th>Product label</th><th>2023</th><th>2024</th><th>2025</th></tr></thead><tbody><tr><td>1</td><td>HS 090111</td><td>Coffee (excl. roasted and decaffeinated)</td><td>1,218.2</td><td>1,530.0</td><td>2,759.7</td></tr>
+<tr><td>2</td><td>HS 854143</td><td>Photovoltaic cells assembled in modules or made up into panels</td><td>0.0</td><td>0.0</td><td>304.1</td></tr>
+<tr><td>3</td><td>HS 060311</td><td>Fresh cut roses and buds, of a kind suitable for bouquets or for ornamental purposes</td><td>199.7</td><td>251.1</td><td>264.6</td></tr>
+<tr><td>4</td><td>HS 120740</td><td>Sesamum seeds, whether or not broken</td><td>233.1</td><td>267.8</td><td>259.1</td></tr>
+<tr><td>5</td><td>HS 854142</td><td>Photovoltaic cells not assembled in modules or made up into panels</td><td>0.0</td><td>0.0</td><td>146.9</td></tr>
+<tr><td>6</td><td>HS 841191</td><td>Parts of turbojets or turbopropellers, n.e.s.</td><td>0.0</td><td>3.0</td><td>85.9</td></tr>
+<tr><td>7</td><td>HS 071333</td><td>Dried, shelled kidney beans &quot;Phaseolus vulgaris&quot;, whether or not skinned or split</td><td>129.0</td><td>95.5</td><td>72.3</td></tr>
+<tr><td>8</td><td>HS 090121</td><td>Roasted coffee (excl. decaffeinated)</td><td>3.5</td><td>33.7</td><td>71.6</td></tr>
+<tr><td>9</td><td>HS 230400</td><td>Oilcake and other solid residues, whether or not ground or in the form of pellets, resulting ...</td><td>5.1</td><td>34.5</td><td>60.9</td></tr>
+<tr><td>10</td><td>HS 841112</td><td>Turbojets of a thrust &gt; 25 kN</td><td>5.2</td><td>48.7</td><td>55.8</td></tr>
+<tr><td>11</td><td>HS 071331</td><td>Dried, shelled beans of species &quot;Vigna mungo [L.] Hepper or Vigna radiata [L.] Wilczek&quot;, whether ...</td><td>12.8</td><td>65.0</td><td>52.6</td></tr>
+<tr><td>12</td><td>HS 611120</td><td>Babies&#x27; garments and clothing accessories of cotton, knitted or crocheted (excl. hats)</td><td>15.4</td><td>38.8</td><td>51.4</td></tr>
+<tr><td>13</td><td>HS 530610</td><td>Single flax yarn</td><td>9.1</td><td>35.3</td><td>42.5</td></tr>
+<tr><td>14</td><td>HS 060319</td><td>Fresh cut flowers and buds, of a kind suitable for bouquets or for ornamental purposes (excl. ...</td><td>31.5</td><td>32.3</td><td>34.0</td></tr>
+<tr><td>15</td><td>HS 060210</td><td>Unrooted cuttings and slips</td><td>30.7</td><td>34.8</td><td>30.0</td></tr>
+<tr><td>16</td><td>HS 610910</td><td>T-shirts, singlets and other vests of cotton, knitted or crocheted</td><td>3.2</td><td>25.5</td><td>27.2</td></tr>
+<tr><td>17</td><td>HS 020130</td><td>Fresh or chilled bovine meat, boneless</td><td>0.0</td><td>28.0</td><td>26.8</td></tr>
+<tr><td>18</td><td>HS 120799</td><td>Oil seeds and oleaginous fruits, whether or not broken (excl. edible nuts, olives, soya beans, ...</td><td>15.6</td><td>22.4</td><td>22.4</td></tr>
+<tr><td>19</td><td>HS 090112</td><td>Decaffeinated coffee (excl. roasted)</td><td>1.9</td><td>11.7</td><td>21.9</td></tr>
+<tr><td>20</td><td>HS 880730</td><td>Parts of aeroplanes, helicopters or unmanned aircraft, n.e.s. (excl. those for gliders)</td><td>5.1</td><td>61.7</td><td>20.4</td></tr></tbody></table>
+
+  <h2 style="margin-top:28px;">HS6 imports</h2>
+  <table><thead><tr><th>Rank</th><th>HS</th><th>Product label</th><th>2023</th><th>2024</th><th>2025</th></tr></thead><tbody><tr><td>1</td><td>HS 880240</td><td>Aeroplanes and other powered aircraft of an of an unladen weight &gt; 15.000 kg (excl. helicopters, ...</td><td>0.1</td><td>585.4</td><td>526.8</td></tr>
+<tr><td>2</td><td>HS 841112</td><td>Turbojets of a thrust &gt; 25 kN</td><td>128.6</td><td>598.0</td><td>433.4</td></tr>
+<tr><td>3</td><td>HS 310530</td><td>Diammonium hydrogenorthophosphate &quot;diammonium phosphate&quot; (excl. that in tablets or similar ...</td><td>0.0</td><td>34.8</td><td>396.0</td></tr>
+<tr><td>4</td><td>HS 271019</td><td>Medium oils and preparations, of petroleum or bituminous minerals, not containing biodiesel, ...</td><td>2,405.7</td><td>290.7</td><td>282.2</td></tr>
+<tr><td>5</td><td>HS 847150</td><td>Processing units for automatic data-processing machines, whether or not containing in the same ...</td><td>20.3</td><td>342.8</td><td>265.9</td></tr>
+<tr><td>6</td><td>HS 842952</td><td>Self-propelled mechanical shovels, excavators and shovel loaders, with a 360° revolving su ...</td><td>17.2</td><td>56.4</td><td>214.7</td></tr>
+<tr><td>7</td><td>HS 854449</td><td>Electric conductors, for a voltage &lt;= 1.000 V, insulated, not fitted with connectors, n.e.s.</td><td>55.8</td><td>123.0</td><td>155.7</td></tr>
+<tr><td>8</td><td>HS 310210</td><td>Urea, whether or not in aqueous solution (excl. that in tablets or similar forms, or in packages ...</td><td>488.7</td><td>0.9</td><td>151.0</td></tr>
+<tr><td>9</td><td>HS 300490</td><td>Medicaments consisting of mixed or unmixed products for therapeutic or prophylactic purposes, ...</td><td>374.3</td><td>143.4</td><td>132.1</td></tr>
+<tr><td>10</td><td>HS 854370</td><td>Electrical machines and apparatus, having individual functions, n.e.s. in chapter 85</td><td>4.3</td><td>102.9</td><td>97.9</td></tr>
+<tr><td>11</td><td>HS 880730</td><td>Parts of aeroplanes, helicopters or unmanned aircraft, n.e.s. (excl. those for gliders)</td><td>342.4</td><td>75.5</td><td>96.7</td></tr>
+<tr><td>12</td><td>HS 854142</td><td>Photovoltaic cells not assembled in modules or made up into panels</td><td>1.5</td><td>0.0</td><td>93.6</td></tr>
+<tr><td>13</td><td>HS 300241</td><td>Vaccines for human medicine</td><td>75.3</td><td>138.4</td><td>89.5</td></tr>
+<tr><td>14</td><td>HS 730890</td><td>Structures and parts of structures, of iron or steel, n.e.s. (excl. bridges and bridge-sections, ...</td><td>89.4</td><td>49.5</td><td>76.3</td></tr>
+<tr><td>15</td><td>HS 851762</td><td>Machines for the reception, conversion and transmission or regeneration of voice, images or ...</td><td>99.0</td><td>84.6</td><td>71.8</td></tr>
+<tr><td>16</td><td>HS 841191</td><td>Parts of turbojets or turbopropellers, n.e.s.</td><td>79.6</td><td>38.6</td><td>68.7</td></tr>
+<tr><td>17</td><td>HS 300420</td><td>Medicaments containing antibiotics, put up in measured doses &quot;incl. those for transdermal administration&quot; ...</td><td>49.5</td><td>48.5</td><td>66.6</td></tr>
+<tr><td>18</td><td>HS 721420</td><td>Bars and rods, of iron or non-alloy steel, with indentations, ribs, groves or other deformations ...</td><td>137.8</td><td>94.1</td><td>64.0</td></tr>
+<tr><td>19</td><td>HS 848620</td><td>Machines and apparatus for the manufacture of semiconductor devices or of electronic integrated ...</td><td>0.0</td><td>0.0</td><td>61.2</td></tr>
+<tr><td>20</td><td>HS 870380</td><td>Motor cars and other motor vehicles principally designed for the transport of &lt;10 persons, ...</td><td>159.9</td><td>51.1</td><td>54.8</td></tr></tbody></table>
+</section>
+
+<script>
+function makeBar(id, labels, datasets) {
+  new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: items => Array.isArray(items[0].label) ? items[0].label.join(' — ') : items[0].label,
+            label: ctx => ' ' + ctx.dataset.label + ': USD ' + ctx.parsed.x.toLocaleString(undefined, {maximumFractionDigits: 1}) + ' million'
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'USD million', font: { size: 11 }, color: '#999' },
+          ticks: { font: { size: 11 }, color: '#777', callback: v => v.toLocaleString() },
+          grid: { color: 'rgba(0,0,0,0.06)' }
+        },
+        y: {
+          ticks: { font: { size: 11 }, color: '#222', autoSkip: false },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+
+function ds(label, data, color) {
+  return { label, data, backgroundColor: color, borderRadius: 2, borderSkipped: false };
+}
+
+makeBar('hs4ExportChart', [["HS 0901", "Coffee"], ["HS 8541", "Photovoltaic cells / semiconductor devices"], ["HS 0603", "Cut flowers"], ["HS 1207", "Other oil seeds"], ["HS 8411", "Turbojets & gas turbines"], ["HS 0713", "Dried leguminous vegetables"], ["HS 2304", "Oilcake & soya residues"], ["HS 6111", "Babies' knit garments"], ["HS 6203", "Men's/boys' suits & trousers"], ["HS 5306", "Flax yarn"], ["HS 0602", "Live plants incl. their roots, cuttings and slips; mushroo…"], ["HS 6109", "T-shirts & vests"], ["HS 0204", "Meat of sheep or goats, fresh, chilled or frozen"], ["HS 0201", "Meat of bovine animals, fresh or chilled"], ["HS 6204", "Women's or girls' suits, ensembles, jackets, blazers, dres…"], ["HS 6110", "Jerseys, pullovers, cardigans, waistcoats and similar arti…"], ["HS 6104", "Women's or girls' suits, ensembles, jackets, blazers, dres…"], ["HS 8807", "Parts of aircraft and spacecraft of heading 8801, 8802 or …"], ["HS 5205", "Cotton yarn other than sewing thread, containing >= 85% co…"], ["HS 2615", "Niobium, tantalum, vanadium or zirconium ores and concentr…"]], [
+  ds('2023', [1225.0, 0.1, 231.1, 258.5, 5.2, 257.4, 5.1, 15.6, 18.3, 9.1, 30.8, 7.9, 61.3, 0.0, 3.8, 6.8, 6.1, 5.1, 4.4, 10.9], '#B5D4F4'),
+  ds('2024', [1583.3, 0.0, 287.5, 298.0, 52.5, 179.5, 34.5, 39.5, 48.0, 35.3, 36.5, 27.9, 55.1, 29.2, 25.5, 24.0, 26.6, 62.4, 16.0, 13.2], '#378ADD'),
+  ds('2025', [2853.4, 451.1, 303.1, 285.6, 141.7, 135.3, 60.9, 52.6, 49.4, 42.5, 31.4, 31.3, 28.8, 27.6, 27.4, 24.7, 24.1, 23.5, 19.6, 17.5], '#0C447C')
+]);
+
+makeBar('hs4ImportChart', [["HS 8802", "Aircraft"], ["HS 8411", "Turbojets & gas turbines"], ["HS 3105", "Mineral/chemical fertilisers"], ["HS 8471", "Automatic data-processing machines"], ["HS 2710", "Refined petroleum oils"], ["HS 8429", "Self-propelled bulldozers/excavators"], ["HS 3004", "Medicaments"], ["HS 8544", "Insulated wire/cable"], ["HS 8807", "Parts of aeroplanes, helicopters or unmanned aircraft, n.e…"], ["HS 8517", "Machines for the reception, conversion and transmission or…"], ["HS 3102", "Nitrogenous fertilisers"], ["HS 8543", "Electrical machines and apparatus, having individual funct…"], ["HS 7308", "Structures and parts of structures, of iron or steel, n.e.…"], ["HS 8541", "Photovoltaic cells / semiconductor devices"], ["HS 3002", "Vaccines for human medicine"], ["HS 8504", "Static converters"], ["HS 3808", "Herbicides, anti-sprouting products and plant-growth regul…"], ["HS 8703", "Motor cars"], ["HS 4011", "New pneumatic tyres, of rubber, of a kind used for buses a…"], ["HS 8486", "Machines and apparatus for the manufacture of semiconducto…"]], [
+  ds('2023', [12.4, 405.8, 697.2, 196.1, 2421.6, 98.1, 459.6, 133.3, 355.4, 348.2, 495.4, 4.9, 123.3, 13.3, 170.3, 135.7, 163.7, 575.3, 135.2, 0.1], '#9FE1CB'),
+  ds('2024', [585.4, 653.2, 45.3, 455.1, 321.1, 71.5, 250.0, 184.4, 101.7, 226.2, 38.1, 104.2, 73.6, 10.5, 146.7, 140.6, 123.1, 138.1, 77.0, 0.1], '#1D9E75'),
+  ds('2025', [526.8, 514.6, 399.7, 312.4, 282.6, 264.1, 258.8, 192.8, 177.4, 161.8, 155.7, 102.3, 101.8, 101.1, 98.0, 95.4, 86.0, 84.5, 83.5, 82.6], '#085041')
+]);
+
+makeBar('hs6ExportChart', [["HS 090111", "Coffee, not roasted/decaf"], ["HS 854143", "Photovoltaic cells in modules/panels"], ["HS 060311", "Fresh roses"], ["HS 120740", "Sesamum seeds"], ["HS 854142", "Photovoltaic cells, not in modules"], ["HS 841191", "Parts of turbojets/turboprops"], ["HS 071333", "Dried kidney beans"], ["HS 090121", "Roasted coffee"], ["HS 230400", "Oilcake & soya residues"], ["HS 841112", "Turbojets >25 kN"], ["HS 071331", "Dried mung/urad beans"], ["HS 611120", "Babies' cotton knit garments"], ["HS 530610", "Single flax yarn"], ["HS 060319", "Other fresh cut flowers"], ["HS 060210", "Unrooted cuttings & slips"], ["HS 610910", "Cotton T-shirts & vests"], ["HS 020130", "Boneless bovine meat"], ["HS 120799", "Other oil seeds/fruits"], ["HS 090112", "Decaf coffee, not roasted"], ["HS 880730", "Parts of aeroplanes, helicopters or unmanned aircraft, n.e…"]], [
+  ds('2023', [1218.2, 0.0, 199.7, 233.1, 0.0, 0.0, 129.0, 3.5, 5.1, 5.2, 12.8, 15.4, 9.1, 31.5, 30.7, 3.2, 0.0, 15.6, 1.9, 5.1], '#B5D4F4'),
+  ds('2024', [1530.0, 0.0, 251.1, 267.8, 0.0, 3.0, 95.5, 33.7, 34.5, 48.7, 65.0, 38.8, 35.3, 32.3, 34.8, 25.5, 28.0, 22.4, 11.7, 61.7], '#378ADD'),
+  ds('2025', [2759.7, 304.1, 264.6, 259.1, 146.9, 85.9, 72.3, 71.6, 60.9, 55.8, 52.6, 51.4, 42.5, 34.0, 30.0, 27.2, 26.8, 22.4, 21.9, 20.4], '#0C447C')
+]);
+
+makeBar('hs6ImportChart', [["HS 880240", "Large powered aircraft"], ["HS 841112", "Turbojets >25 kN"], ["HS 310530", "Diammonium phosphate"], ["HS 271019", "Refined petroleum oils"], ["HS 847150", "Computer processing units"], ["HS 842952", "360° mechanical excavators"], ["HS 854449", "Insulated electric conductors"], ["HS 310210", "Urea"], ["HS 300490", "Medicaments, mixed/unmixed"], ["HS 854370", "Electrical machines and apparatus, having individual funct…"], ["HS 880730", "Parts of aeroplanes, helicopters or unmanned aircraft, n.e…"], ["HS 854142", "Photovoltaic cells, not in modules"], ["HS 300241", "Vaccines for human medicine"], ["HS 730890", "Structures and parts of structures, of iron or steel, n.e.…"], ["HS 851762", "Machines for the reception, conversion and transmission or…"], ["HS 841191", "Parts of turbojets/turboprops"], ["HS 300420", "Medicaments containing antibiotics, put up in measured dos…"], ["HS 721420", "Bars and rods, of iron or non-alloy steel, with indentatio…"], ["HS 848620", "Machines and apparatus for the manufacture of semiconducto…"], ["HS 870380", "Motor cars and other motor vehicles principally designed f…"]], [
+  ds('2023', [0.1, 128.6, 0.0, 2405.7, 20.3, 17.2, 55.8, 488.7, 374.3, 4.3, 342.4, 1.5, 75.3, 89.4, 99.0, 79.6, 49.5, 137.8, 0.0, 159.9], '#9FE1CB'),
+  ds('2024', [585.4, 598.0, 34.8, 290.7, 342.8, 56.4, 123.0, 0.9, 143.4, 102.9, 75.5, 0.0, 138.4, 49.5, 84.6, 38.6, 48.5, 94.1, 0.0, 51.1], '#1D9E75'),
+  ds('2025', [526.8, 433.4, 396.0, 282.2, 265.9, 214.7, 155.7, 151.0, 132.1, 97.9, 96.7, 93.6, 89.5, 76.3, 71.8, 68.7, 66.6, 64.0, 61.2, 54.8], '#085041')
+]);
+</script>
+</body>
+</html>
